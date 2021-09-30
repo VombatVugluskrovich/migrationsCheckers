@@ -5,7 +5,7 @@ const MigrationRulesHelper = {
         if (detailedMessage) {
             message += detailedMessage;
         }
-        MigrationRulesHelper.outputMessages.add(message);
+        MigrationRulesHelper.outputMessages.push(message);
     }
 }
 

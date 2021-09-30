@@ -11,7 +11,7 @@ const {MigrationRulesHelper, Severity} = require("./rules/MigrationRulesHelper.j
 const run = async () => {
   const diffFileNames = [];
   for (let diffFilter of diffFilters) {
-    diffFileNames.add({
+    diffFileNames.push({
       type: diffFilter,
       path: path.join(__dirname, MIGRATIONS_DIFF_FILE_PATH_BASE + diffFilter + '.txt')
     });
@@ -22,6 +22,7 @@ const run = async () => {
       const diff = fs.readFileSync(diffFileName.path, "utf8");
       const diffLines = diff.split(/\r?\n/);
       for (let diffLine of diffLines) {
+
 
         console.log(diffLine);
         for (let checkRule of Object.values(rules)) {
