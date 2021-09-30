@@ -43,10 +43,10 @@ const checkMigration = (filePath, migration) => {
 };
 
 const checkMigrationName = async (migrationNme, filePath) => {
-	if(!migrationNme.includes('-')) {
+	const regex = new RegExp('/\d{13}-\W*\D*.ts/');
+	if(!regex.test(migrationNme)) {
 		mrh.MigrationRulesHelper.addOutputMessage(mrh.Severity.CRITICAL, 'add', filePath, 'Invalid migration name');
 	}
-
 }
 const checkTimestamp = async (migrationName) => console.log("timestamp");
 const checkIfTimestampLast = async (file) => console.log("lastTimestamp");
