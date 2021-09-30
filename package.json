@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/VombatVugluskrovich/migrationsCheckers#readme",
   "dependencies": {
-    "typeorm": "^0.2.37",
+    "node-mailjet": "^3.3.4",
+    "nodemailer": "^6.6.5",
     "typescript": "^4.4.3"
   }
 }
