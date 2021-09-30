@@ -1,7 +1,7 @@
 {
   "name": "migrationscheckers",
   "version": "1.0.0",
-  "description": "Perfect tool for run migration developed by genious guys and could be amazing example for future developers generations",
+  "description": "Perfect tool for run migration developed by genius guys and could be amazing example for future developers generations",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
