@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const rules = require("./rules");
 
@@ -24,7 +24,7 @@ const run = async () => {
 
   for (let diffFileName of diffFileNames) {
     if (diffFileName.type === "add") {
-      const diff = fs.readFileSync(diffFileName.path, "utf8");
+      const diff = await fs.readFile(diffFileName.path, "utf8");
       const diffLines = diff.split(/\r?\n/);
       for (let diffLine of diffLines) {
         for (let checkRule of Object.values(rules)) {
@@ -40,6 +40,8 @@ const run = async () => {
       );
     }
   }
+
+  MigrationRulesHelper.log();
 };
 
 run();
