@@ -1,1 +1,6 @@
-git diff --name-only --diff-filter=A main migrations > 
+git diff --name-only --diff-filter=A main migrations > scripts/migrations-diff-add.txt
+git diff --name-only --diff-filter=T main migrations > scripts/migrations-diff-change.txt
+git diff --name-only --diff-filter=C main migrations > scripts/migrations-diff-copy.txt
+git diff --name-only --diff-filter=D main migrations > scripts/migrations-diff-delete.txt
+git diff --name-only --diff-filter=M main migrations > scripts/migrations-diff-modify.txt
+git diff --name-only --diff-filter=R main migrations > scripts/migrations-diff-rename.txt
