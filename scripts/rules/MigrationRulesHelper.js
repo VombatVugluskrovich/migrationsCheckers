@@ -6,6 +6,7 @@ const MigrationRulesHelper = {
             message += detailedMessage;
         }
         MigrationRulesHelper.outputMessages.push(message);
+        console.log(message);
     }
 }
 
