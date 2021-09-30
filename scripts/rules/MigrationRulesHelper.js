@@ -1,7 +1,7 @@
 const MigrationRulesHelper = {
   outputMessages: [],
   addOutputMessage: (severity, type, path, detailedMessage) => {
-    let message = `${severity}: file ${path}, change type ${type}!`;
+    let message = `${severity}: file, ${path}, change type ${type}!`;
     
     if (detailedMessage) {
       message += detailedMessage;

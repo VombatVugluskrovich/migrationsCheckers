@@ -23,21 +23,21 @@ const run = async () => {
   }
 
   for (let diffFileName of diffFileNames) {
-    if (diffFileName.type === "add") {
-      const diff = await fs.readFile(diffFileName.path, "utf8");
-      const diffLines = diff.split(/\r?\n/);
-      for (let diffLine of diffLines) {
-        for (let checkRule of Object.values(rules)) {
-          const fileName = diffLine.split("migrations/")[1];
+    const diff = await fs.readFile(diffFileName.path, "utf8");
+    const diffLines = diff.split(/\r?\n/);
+    for (let diffLine of diffLines) {
+      for (let checkRule of Object.values(rules)) {
+        const fileName = diffLine.split("migrations/")[1];
+        if (diffFileName.type === "add") {
           await checkRule(fileName);
+        } else {
+          MigrationRulesHelper.addOutputMessage(
+            Severity.CRITICAL,
+            diffFileName.type,
+            fileName
+          );
         }
       }
-    } else {
-      MigrationRulesHelper.addOutputMessage(
-        Severity.CRITICAL,
-        diffFileName.type,
-        diffFileName.path
-      );
     }
   }
 
