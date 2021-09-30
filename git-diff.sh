@@ -1,8 +1,1 @@
-
-
-cd /migrations
-if [[ `git status --porcelain` ]]; then
-  # Changes
-else
-  # No changes
-fi
+git diff --name-only main migrations > branch-difference.txt

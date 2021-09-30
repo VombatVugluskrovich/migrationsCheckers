@@ -1,0 +1,55 @@
+diff --git a/.gitignore b/.gitignore
+index 41a81ce..6704566 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -102,5 +102,3 @@ dist
+ 
+ # TernJS port file
+ .tern-port
+-
+-.idea/
+\ No newline at end of file
+diff --git a/git-diff.sh b/git-diff.sh
+deleted file mode 100644
+index e53f501..0000000
+--- a/git-diff.sh
++++ /dev/null
+@@ -1,8 +0,0 @@
+-
+-
+-cd /migrations
+-if [[ `git status --porcelain` ]]; then
+-  # Changes
+-else
+-  # No changes
+-fi
+\ No newline at end of file
+diff --git a/migrations/file1.txt b/migrations/file1.txt
+deleted file mode 100644
+index 8346027..0000000
+--- a/migrations/file1.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-1
+-w
+\ No newline at end of file
+diff --git a/migrations/file2.txt b/migrations/file2.txt
+deleted file mode 100644
+index 30d74d2..0000000
+--- a/migrations/file2.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-test
+\ No newline at end of file
+diff --git a/migrations/file3.txt b/migrations/file3.txt
+deleted file mode 100644
+index 7d8a103..0000000
+--- a/migrations/file3.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-asdf
+-fdgdfdghd
+\ No newline at end of file
+diff --git a/migrations/file4.txt b/migrations/file4.txt
+deleted file mode 100644
+index e69de29..0000000
