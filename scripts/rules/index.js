@@ -1,6 +1,27 @@
 const fs = require("fs");
 const path = require("path");
 
+const runCheck = async () => {
+	const filePath = "./scripts/output/migrations-diff-add.txt";
+	const addedMigrationsFile = fs.readFileSync(filePath, "utf8");
+	const migrationsArray = addedMigrationsFile.split(/\n/);
+	
+	migrationsArray.forEach((migration) => {
+		const filePath = path.join(
+			"../migrations",
+			migration
+		);
+		try {
+			if(fs.existsSync(filePath)) {
+				checkMigration(migration);
+			}
+		} catch(err){
+			console.log(err);
+		}
+	});
+	
+};
+
 const checkMigration = (fileName) => {
 	const filePath = path.join(
 		"../migrations",
@@ -28,10 +49,7 @@ const checkKeywords = async (file, keywords) => console.log("keywords");
 const checkConstraints = async (file) => console.log("constraint");
 
 module.exports = {
-  checkMigration,
-  //not sure if we ll need to export rest, we need only the main func (checkMigration())
-  checkTimestamp,
-  checkIfTimestampLast,
-  checkKeywords,
-  checkConstraints
+  checkMigration
 };
+
+runCheck();
