@@ -1,3 +1,2 @@
-hello
-hello1
-hello2
+migrations/1572621538158-Deleted.ts
+migrations/1572621664357-Deleted2.ts
