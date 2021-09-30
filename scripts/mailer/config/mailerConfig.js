@@ -34,8 +34,4 @@ module.exports.emailList = [
     email: "eugeny.garder@sprintingsoftware.com",
     name: "Eugene Garder",
   },
-  {
-    email: "eugeny.garder@gmail.com",
-    name: "Eugene Garder @ gmail",
-  },
 ];
