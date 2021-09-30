@@ -1,38 +1,47 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
-const mailer = require("./mailer/mailSender");
+const rules = require("./rules");
 
-const MIGRATIONS_DIFF_FILE_PATH = path.join(__dirname, "output/migrations-diff.txt");
-const rules = [() => console.log("prva"), () => console.log("druga")];
+const diffFilters = ["add", "change", "delete", "modify", "rename"];
+const MIGRATIONS_DIFF_FILE_PATH_BASE = "output/migrations-diff-";
+
+const {
+  MigrationRulesHelper,
+  Severity,
+} = require("./rules/MigrationRulesHelper.js");
 
 const run = async () => {
-  //   const messages = [
-  //     {
-  //       dateTime: "01-01-2021",
-  //       severity: "error",
-  //       message: "DNA error. Please replace user and press any key",
-  //     },
-  //     {
-  //       dateTime: "01-01-2021",
-  //       severity: "warning",
-  //       message: "User might cause damage due to low IQ index",
-  //     },
-  //     {
-  //       dateTime: "01-01-2021",
-  //       severity: "info",
-  //       message: "Next time please be carefull chossing miogration user",
-  //     },
-  //   ];
-  //   mailer.sendEmails(messages);
-  const diff = fs.readFileSync(MIGRATIONS_DIFF_FILE_PATH, "utf8");
-  const diffLines = diff.split(/\r?\n/);
+  const diffFileNames = [];
+  for (let diffFilter of diffFilters) {
+    diffFileNames.push({
+      type: diffFilter,
+      path: path.join(
+        __dirname,
+        MIGRATIONS_DIFF_FILE_PATH_BASE + diffFilter + ".txt"
+      ),
+    });
+  }
 
-  for (let diffLine of diffLines) {
-    console.log(diffLine);
-    for (let checkRule of rules) {
-      await checkRule(diffLine);
+  for (let diffFileName of diffFileNames) {
+    if (diffFileName.type === "add") {
+      const diff = await fs.readFile(diffFileName.path, "utf8");
+      const diffLines = diff.split(/\r?\n/);
+      for (let diffLine of diffLines) {
+        for (let checkRule of Object.values(rules)) {
+          const fileName = diffLine.split("migrations/")[1];
+          await checkRule(fileName);
+        }
+      }
+    } else {
+      MigrationRulesHelper.addOutputMessage(
+        Severity.CRITICAL,
+        diffFileName.type,
+        diffFileName.path
+      );
     }
   }
+
+  MigrationRulesHelper.log();
 };
 
 run();
