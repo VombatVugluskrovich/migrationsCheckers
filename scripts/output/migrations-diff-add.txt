@@ -1,3 +1,3 @@
-1572621538158-TenantCreate.ts
-1572621664357-DbPingCreate.ts
-1574384688807-UserCreate.ts
+migrations/1572621538158-TenantCreate.ts
+migrations/1572621664357-DbPingCreate.ts
+migrations/1574384688807-UserCreate.ts

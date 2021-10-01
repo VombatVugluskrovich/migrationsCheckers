@@ -1,77 +1,81 @@
-const fs = require("fs");
-const path = require("path");
-const keywords = ["DROP", "DELETE"];
-const mrh = require('./MigrationRulesHelper');
+const { MigrationRulesHelper, Severity } = require("./MigrationRulesHelper");
 
-const runCheck = async () => {
-	const filePath = "./scripts/output/migrations-diff-add.txt";
-	const addedMigrationsFile = fs.readFileSync(filePath, "utf8");
-	const migrationsArray = addedMigrationsFile.split(/\n/);
-	
-	migrationsArray.forEach((migration) => {
-		const filePath = path.join(
-			"./migrations",
-			migration
-		);
-		try {
-			if(!fs.existsSync(filePath)) {
-				throw `Error: Migration file not found ${filePath}`;
-			}
-			checkMigration(filePath, migration);
-		} catch(err){
-			console.log(err);
-		}
-	});
-	
-};
+const MIGRATIONS_FOLDER = "./migrations";
+const MIGRATION_FILE_NAME_PATTERN = "d{13}-W*D*.ts";
 
 const splitMigration = (parsedString) => {
-	const returningObject = {};
-	const afterUp = parsedString.split("public async up(")[1];
-	const splitAfterUp = afterUp.split("public async down(");
-	returningObject.up = splitAfterUp[0];
-	returningObject.down = splitAfterUp[1];
-	return returningObject;	
+  const returningObject = {};
+  const afterUp = parsedString.split("public async up(")[1];
+  const splitAfterUp = afterUp.split("public async down(");
+  returningObject.up = splitAfterUp[0];
+  returningObject.down = splitAfterUp[1];
+  return returningObject;
 };
 
-const checkMigration = (filePath, migration) => {
-	try {
-		const readFile = fs.readFileSync(filePath, "utf8");
-
-		return Promise.all([
-			checkMigrationName(migration, filePath),
-			checkTimestamp(migration), 
-			checkIfTimestampLast(readFile), 
-			checkKeywords(readFile), 
-			checkConstraints(readFile, filePath)
-		]);
-	
-	} catch(err) {
-		console.error(err)
-	}
+const getLastExistingMigrationName = () => {
+  const migrationFiles = fs
+    .readdirSync(MIGRATIONS_FOLDER)
+    .filter((m) => m.match(MIGRATION_FILE_NAME_PATTERN));
+  console.log("MIGRACIJE:", migrationFiles);
+  return migrationFiles[migrationFiles.length - 1];
 };
-const checkMigrationName = async (migrationNme, filePath) => {
-	const regex = new RegExp(/\d{13}-\W*\D*.ts/);
-	if(!regex.test(migrationNme)) {
-		mrh.MigrationRulesHelper.addOutputMessage(mrh.Severity.CRITICAL, 'add', filePath, 'Invalid migration name');
-	}
+
+const checkMigrationName = async (fileName, fileContent) => {
+  const regex = new RegExp(/\d{13}-\W*\D*.ts/);
+  if (!regex.test(fileName)) {
+    MigrationRulesHelper.addOutputMessage(
+      Severity.CRITICAL,
+      "add",
+      fileContent,
+      "Invalid migration name"
+    );
+  }
 };
 const checkTimestamp = async (migrationName) => console.log("timestamp");
 const checkIfTimestampLast = async (file) => console.log("lastTimestamp");
-const checkKeywords = async (file, keywords) => console.log("keywords");
 
-const checkConstraints = async (file, filePath) => {
-	const dividedMigration = splitMigration(file);
-	const constraints = ["dropUniqueConstraint", "dropUniqueConstraint", "createUniqueConstraint", "ADD CONSTRAINT", "Add constraint", "add constraint"];
-	constraints.forEach((constraint) => {
-		if(dividedMigration.up.includes(constraint)){
-			mrh.MigrationRulesHelper.addOutputMessage(mrh.Severity.WARNING, 'add', filePath, `Constraint changed: ${constraint}`);
-		}
-	});
+const checkKeywords = async (filePath, fileContent) => {
+  const keywords = ["DROP", "DELETE"];
+  for (let keyword of keywords) {
+    if (
+      fileContent.includes(keyword) ||
+      fileContent.includes(keyword.toLowerCase()) ||
+      fileContent.includes(keyword.toUpperCase())
+    ) {
+      MigrationRulesHelper.addOutputMessage(
+        Severity.WARNING,
+        "add",
+        filePath,
+        `Migration contains keyword: ${keyword}`
+      );
+    }
+  }
+};
+
+const checkConstraints = async (fileName, fileContent) => {
+  const dividedMigration = splitMigration(fileContent);
+  const constraints = [
+    "dropUniqueConstraint",
+    "dropUniqueConstraint",
+    "createUniqueConstraint",
+    "ADD CONSTRAINT",
+    "Add constraint",
+    "add constraint",
+  ];
+  constraints.forEach((constraint) => {
+    if (dividedMigration.up.includes(constraint)) {
+      MigrationRulesHelper.addOutputMessage(
+        Severity.WARNING,
+        "add",
+        fileName,
+        `Constraint changed: ${constraint}`
+      );
+    }
+  });
 };
 
 module.exports = {
-  checkMigration
+  checkMigrationName,
+  checkConstraints,
+  checkKeywords,
 };
-
-runCheck();

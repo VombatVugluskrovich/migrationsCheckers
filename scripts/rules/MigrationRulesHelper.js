@@ -10,7 +10,7 @@ const MigrationRulesHelper = {
     };
 
     if (detailedMessage) {
-      message += detailedMessage;
+      message += ` ${detailedMessage}`;
       emailMessage.message += detailedMessage;
     }
 

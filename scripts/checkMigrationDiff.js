@@ -27,9 +27,25 @@ const run = async () => {
     const diffLines = diff.split(/\r?\n/);
     for (let diffLine of diffLines) {
       for (let checkRule of Object.values(rules)) {
-        const fileName = diffLine.split("migrations/")[1];
+        let fileName, fileContent;
+        try {
+          fileName = diffLine.split("migrations/")[1];
+          fileContent = await fs.readFile(
+            path.join(__dirname, "../", diffLine),
+            "utf8"
+          );
+        } catch (err) {
+          MigrationRulesHelper.addOutputMessage(
+            Severity.CRITICAL,
+            diffFileName.type,
+            fileName,
+            "Failed: unexisting file."
+          );
+          break;
+        }
+
         if (diffFileName.type === "add") {
-          await checkRule(fileName);
+          await checkRule(fileName, fileContent);
         } else {
           MigrationRulesHelper.addOutputMessage(
             Severity.CRITICAL,
