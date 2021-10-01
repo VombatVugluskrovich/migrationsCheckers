@@ -10,23 +10,14 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
-    "types": ["reflect-metadata", "jest"],
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "paths": {
-      "@src/*": ["src/*"],
-      "@jest/*": ["jest/*"],
-      "@seeds/*": ["seeds/*"],
-      "@core/*": ["src/core/*"],
-      "@tasks/*": ["src/aamworker/tasks/*"]
-    }
   },
   "include": [
     "src/**/*.ts",
     "test/**/*.ts",
     "migrations/*.ts",
     "seeds/**/*.ts",
-    "jest/**/*.ts",
     "api-tests/**/*.ts",
     "./*.config.ts",
     "./*setup.ts",
