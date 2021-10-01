@@ -25,6 +25,15 @@ const runCheck = async () => {
 	
 };
 
+const splitMigration = (parsedString) => {
+	const returningObject = {};
+	const afterUp = parsedString.split("public async up(")[1];
+	const splitAfterUp = afterUp.split("public async down(");
+	returningObject.up = splitAfterUp[0];
+	returningObject.down = splitAfterUp[1];
+	return returningObject;	
+};
+
 const checkMigration = (filePath, migration) => {
 	try {
 		const readFile = fs.readFileSync(filePath, "utf8");
@@ -34,24 +43,32 @@ const checkMigration = (filePath, migration) => {
 			checkTimestamp(migration), 
 			checkIfTimestampLast(readFile), 
 			checkKeywords(readFile), 
-			checkConstraints(readFile)
+			checkConstraints(readFile, filePath)
 		]);
 	
 	} catch(err) {
 		console.error(err)
 	}
 };
-
 const checkMigrationName = async (migrationNme, filePath) => {
-	if(!migrationNme.includes('-')) {
+	const regex = new RegExp(/\d{13}-\W*\D*.ts/);
+	if(!regex.test(migrationNme)) {
 		mrh.MigrationRulesHelper.addOutputMessage(mrh.Severity.CRITICAL, 'add', filePath, 'Invalid migration name');
 	}
-
-}
+};
 const checkTimestamp = async (migrationName) => console.log("timestamp");
 const checkIfTimestampLast = async (file) => console.log("lastTimestamp");
 const checkKeywords = async (file, keywords) => console.log("keywords");
-const checkConstraints = async (file) => console.log("constraint");
+
+const checkConstraints = async (file, filePath) => {
+	const dividedMigration = splitMigration(file);
+	const constraints = ["dropUniqueConstraint", "dropUniqueConstraint", "createUniqueConstraint", "ADD CONSTRAINT", "Add constraint", "add constraint"];
+	constraints.forEach((constraint) => {
+		if(dividedMigration.up.includes(constraint)){
+			mrh.MigrationRulesHelper.addOutputMessage(mrh.Severity.WARNING, 'add', filePath, `Constraint changed: ${constraint}`);
+		}
+	});
+};
 
 module.exports = {
   checkMigration
