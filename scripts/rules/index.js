@@ -1,7 +1,8 @@
+const fs = require("fs").promises;
 const { MigrationRulesHelper, Severity } = require("./MigrationRulesHelper");
 
+const MAX_DAYS_IN_THE_PAST = 5;
 const MIGRATIONS_FOLDER = "./migrations";
-const MIGRATION_FILE_NAME_PATTERN = "d{13}-W*D*.ts";
 
 const splitMigration = (parsedString) => {
   const returningObject = {};
@@ -12,11 +13,10 @@ const splitMigration = (parsedString) => {
   return returningObject;
 };
 
-const getLastExistingMigrationName = () => {
-  const migrationFiles = fs
-    .readdirSync(MIGRATIONS_FOLDER)
-    .filter((m) => m.match(MIGRATION_FILE_NAME_PATTERN));
-  console.log("MIGRACIJE:", migrationFiles);
+const getLastExistingMigrationName = async () => {
+  const migrationFilesRaw = await fs.readdir(MIGRATIONS_FOLDER);
+  const regex = new RegExp(/\d{13}-\W*\D*.ts/);
+  const migrationFiles = migrationFilesRaw.filter((m) => regex.test(m));
   return migrationFiles[migrationFiles.length - 1];
 };
 
@@ -31,7 +31,7 @@ const checkMigrationName = async (fileName, fileContent) => {
     );
   }
 };
-const checkTimestamp = async (migrationName) => console.log("timestamp");
+
 const checkIfTimestampLast = async (file) => console.log("lastTimestamp");
 
 const checkKeywords = async (filePath, fileContent) => {
@@ -74,8 +74,47 @@ const checkConstraints = async (fileName, fileContent) => {
   });
 };
 
+const checkTimestamp = async (fileName) => {
+  const timestampString = fileName.split("-")[0];
+  let timestamp;
+  try {
+    timestamp = new Date(timestampString);
+  } catch (e) {
+    MigrationRulesHelper.addOutputMessage(
+      Severity.CRITICAL,
+      "add",
+      fileName,
+      `${timestampString} is not a legal timestamp!`
+    );
+    return;
+  }
+
+  const timestampStringOfLastExistingMigrationRaw =
+    await getLastExistingMigrationName();
+
+  const timestampStringOfLastExistingMigration =
+    timestampStringOfLastExistingMigrationRaw.split("-")[0];
+  let timestampOfLastExistingMigration = new Date(
+    timestampStringOfLastExistingMigration
+  );
+
+  if (timestamp < timestampOfLastExistingMigration) {
+    MigrationRulesHelper.addOutputMessage(
+      Severity.CRITICAL,
+      "add",
+      fileName,
+      `Migration is added in wrong order!`
+    );
+  }
+
+  const now = new Date();
+  let maximumPastDate = new Date();
+  maximumPastDate.setDate(maximumPastDate.getDate() - MAX_DAYS_IN_THE_PAST);
+};
+
 module.exports = {
   checkMigrationName,
   checkConstraints,
   checkKeywords,
+  checkTimestamp,
 };

@@ -21,7 +21,10 @@ const MigrationRulesHelper = {
     if (MigrationRulesHelper.outputMessages.length) {
       console.log(MigrationRulesHelper.outputMessages);
       const emailSender = require("./../mailer/mailSender");
-      emailSender.sendEmails(MigrationRulesHelper.emailMessages);
+      // await emailSender.sendEmails(MigrationRulesHelper.emailMessages);
+      throw new Error(
+        "Migration changes need to be manually checked. The PR reviewers are notified by email already."
+      );
     } else {
       console.log("All matched files use proper migration rules ");
     }

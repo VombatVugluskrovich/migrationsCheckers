@@ -24,6 +24,10 @@ const run = async () => {
 
   for (let diffFileName of diffFileNames) {
     const diff = await fs.readFile(diffFileName.path, "utf8");
+    const diffIsEmpty = diff.trim().length === 0;
+    if (diffIsEmpty) {
+      continue;
+    }
     const diffLines = diff.split(/\r?\n/);
     for (let diffLine of diffLines) {
       for (let checkRule of Object.values(rules)) {

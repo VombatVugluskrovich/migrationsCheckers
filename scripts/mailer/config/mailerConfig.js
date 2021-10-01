@@ -31,7 +31,7 @@ module.exports.htmlTemplate = `
 </html>`;
 module.exports.emailList = [
   {
-    email: "eugeny.garder@sprintingsoftware.com",
-    name: "Eugene Garder",
+    email: "blasko@sprintingsoftware.com",
+    name: "Blasko",
   },
 ];

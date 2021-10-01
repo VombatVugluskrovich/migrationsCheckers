@@ -16,7 +16,7 @@ const formatMessages = (messages) => {
   return htmlTemplate.replace("{TR}", trTags.join("\n"));
 };
 const sendEmail = async (messageFormatted) => {
-  const mailjet = require("node-mailjet").connect("de5a4fd1d2a8fb915dc6f0922ccbd3b1", "5985cffd7e0265f1f29e3907ea2895ba");
+  const mailjet = require("node-mailjet").connect("", "");
   const messagesTo = [];
   for (const email of emailRecipents) {
     messagesTo.push({
@@ -28,7 +28,7 @@ const sendEmail = async (messageFormatted) => {
     Messages: [
       {
         From: {
-          Email: "eugeny.garder@sprintingsoftware.com",
+          Email: "blasko@sprintingsoftware.com",
           Name: "Duncan McLeod the Migrator",
         },
         To: messagesTo,
@@ -39,14 +39,7 @@ const sendEmail = async (messageFormatted) => {
   });
   request
     .then((result) => {
-      console.log(result.body);
-    })
-    .catch((err) => {
-      console.log(err.statusCode);
-    });
-  request
-    .then((result) => {
-      console.log(result.body);
+      console.log('Email sent.');
     })
     .catch((err) => {
       console.log(err.statusCode);
