@@ -32,8 +32,6 @@ const checkMigrationName = async (fileName, fileContent) => {
   }
 };
 
-const checkIfTimestampLast = async (file) => console.log("lastTimestamp");
-
 const checkKeywords = async (filePath, fileContent) => {
   const keywords = ["DROP", "DELETE"];
   for (let keyword of keywords) {
